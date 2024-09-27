@@ -17,7 +17,7 @@ using namespace mlir;
 int main(int argc, char *argv[]) {
   DialectRegistry registry;
   registerAllDialects(registry);
-  PassRegistration<tutorial::AffineFullUnrollPass>();
+  PassRegistration<tutorial::AffineFullUnrollPatternRewriter>();
   return asMainReturnCode(
       MlirOptMain(argc, argv, "Tutorial Pass Driver", registry));
   // MLIRContext ctx;

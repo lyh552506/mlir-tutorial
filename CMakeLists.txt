@@ -10,7 +10,6 @@ find_package(MLIR REQUIRED CONFIG)
 
 message(STATUS "Using MLIRConfig.cmake in: ${MLIR_DIR}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
-
 set(MLIR_BINARY_DIR ${CMAKE_BINARY_DIR})
 
 include(AddLLVM)
@@ -24,15 +23,28 @@ include_directories(${PROJECT_SOURCE_DIR})
 include_directories(/home/lyh_irie/Arch_Learning/hands-on-mlir/llvm-project)
 include_directories(${PROJECT_BINARY_DIR})
 
-# message(STATUS "Fetching or-tools...")
-# include(FetchContent)
-# FetchContent_Declare(
-#   or-tools
-#   GIT_REPOSITORY https://github.com/google/or-tools.git
-#   GIT_TAG        v9.0
-# )
-# FetchContent_MakeAvailable(or-tools)
-# message(STATUS "Done fetching or-tools")
-
-add_subdirectory(tools)
 add_subdirectory(lib)
+
+get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
+get_property(conversion_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
+
+set (target_libs
+    ${dialect_libs}
+    ${conversion_libs}
+    AffineFullUnroll
+    ArithOpt
+    # MLIRNoisy
+    MLIROptLib
+    MLIRPass
+    # MLIRPoly
+    # MulToAdd
+    # NoisyPasses
+    # PolyToStandarda
+    # ortools::ortools
+)
+
+add_llvm_executable(mlir-tutorial tutorial-opt.cpp)
+llvm_update_compile_flags(mlir-tutorial)
+target_link_libraries(mlir-tutorial PRIVATE ${target_libs})
+
+mlir_check_all_link_libraries(mlir-tutorial)
