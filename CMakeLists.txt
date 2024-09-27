@@ -1,29 +1,38 @@
-cmake_minimum_required(VERSION 3.13.4)
+cmake_minimum_required(VERSION 3.20.0)
 
-project(mlir-toy VERSION 0.0.0)
+project(mlir-tutorial LANGUAGES CXX C)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # 生成 compile_commands.json 便于代码高亮
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED YES)
+set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard to conform to")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(BUILD_DEPS ON)
 set(CMAKE_INSTALL_PREFIX "/home/lyh_irie/Arch_Learning/hands-on-mlir/install")
 find_package(MLIR REQUIRED CONFIG)
-list(APPEND CMAKE_MODULE_PATH "${MLIR_CMAKE_DIR}")
-list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
 
-include(TableGen)
+message(STATUS "Using MLIRConfig.cmake in: ${MLIR_DIR}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+
+set(MLIR_BINARY_DIR ${CMAKE_BINARY_DIR})
+
 include(AddLLVM)
+include(TableGen)
+
+list(APPEND CMAKE_MODULE_PATH "${MLIR_CMAKE_DIR}")
 include(AddMLIR)
-include(HandleLLVMOptions)
+include_directories(${LLVM_INCLUDE_DIRS})
+include_directories(${MLIR_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR})
+include_directories(/home/lyh_irie/Arch_Learning/hands-on-mlir/llvm-project)
+include_directories(${PROJECT_BINARY_DIR})
 
+# message(STATUS "Fetching or-tools...")
+# include(FetchContent)
+# FetchContent_Declare(
+#   or-tools
+#   GIT_REPOSITORY https://github.com/google/or-tools.git
+#   GIT_TAG        v9.0
+# )
+# FetchContent_MakeAvailable(or-tools)
+# message(STATUS "Done fetching or-tools")
 
-
-include_directories(${LLVM_INCLUDE_DIRS} ${MLIR_INCLUDE_DIRS})
-
-add_executable(mlir-toy main.cpp)
-target_link_libraries(
-  mlir-toy
-  MLIRIR
-  MLIRParser
-  MLIRFuncDialect
-  MLIRArithDialect
-)
+add_subdirectory(tools)
+add_subdirectory(lib)
