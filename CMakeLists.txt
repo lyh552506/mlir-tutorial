@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.20.0)
 
 project(mlir-tutorial LANGUAGES CXX C)
 
+if(NOT CMAKE_GENERATOR)
+  set(CMAKE_GENERATOR "Ninja" CACHE INTERNAL "" FORCE)
+endif()
+
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard to conform to")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_DEPS ON)

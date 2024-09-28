@@ -36,16 +36,33 @@ struct PowerOfTwoExpand : public OpRewritePattern<arith::MulIOp> {
 
     // RAUW
     rewriter.replaceOp(op, new_Add);
-    rewriter.eraseOp(op);
+    // rewriter.eraseOp(op);
     return success();
   }
 };
 
+// define the target pattern
 struct PeelFromMul : public OpRewritePattern<arith::MulIOp> {
   PeelFromMul(MLIRContext *ctx) : OpRewritePattern(ctx, /*benefit*/ 3) {}
   // rewriting y = 9*x as y = 8*x + x
   LogicalResult matchAndRewrite(arith::MulIOp op,
                                 PatternRewriter &rewriter) const override {
+    auto lhs = op.getLhs();
+    auto rhs = op.getRhs();
+    auto rhs_const = rhs.getDefiningOp<arith::ConstantIntOp>();
+    if (!rhs_const)
+      return failure();
+    auto target = rhs_const.value();
+    if (!(target & (target - 1)))
+      return failure();
+    auto newConst = rewriter.create<arith::ConstantOp>(
+        op->getLoc(), rewriter.getIntegerAttr(rhs.getType(), target - 1));
+    auto newMul =
+        rewriter.create<arith::MulIOp>(newConst->getLoc(), lhs, newConst);
+    auto newAdd = rewriter.create<arith::AddIOp>(newMul.getLoc(), newMul, lhs);
+
+    rewriter.replaceOp(op, newAdd);
+    // rewriter.eraseOp(op);
     return success();
   }
 };

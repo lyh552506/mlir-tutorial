@@ -1,4 +1,5 @@
 #include "../lib/Transform/Affine/AffineFullUnroll.h"
+#include "lib/Transform/Arith/Mul2Add.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/IR/AsmState.h"
@@ -18,6 +19,8 @@ int main(int argc, char *argv[]) {
   DialectRegistry registry;
   registerAllDialects(registry);
   PassRegistration<tutorial::AffineFullUnrollPatternRewriter>();
+  PassRegistration<tutorial::Mul2AddPass>();
+
   return asMainReturnCode(
       MlirOptMain(argc, argv, "Tutorial Pass Driver", registry));
   // MLIRContext ctx;
