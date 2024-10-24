@@ -7,7 +7,7 @@ add_mlir_library(ArithOpt
     ADDITIONAL_HEADER_DIRS
 
     # DEPENDS
-    # MLIRAffineFullUnrollPasses
+    MLIRAffineFullUnrollPasses
 
     LINK_LIBS PUBLIC
 )

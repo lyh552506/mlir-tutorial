@@ -4,22 +4,22 @@
 #include "mlir/IR/PatternMatch.h"
 #include "mlir/Support/LogicalResult.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
-using mlir::affine::AffineForOp;
-using mlir::affine::loopUnrollFull;
+using namespace mlir;
 namespace tutorial {
-void AffineFullUnrollPass::runOnOperation() {
-  getOperation()->walk([&](AffineForOp target) {
-    if (failed(loopUnrollFull(target))) {
-      target->emitError("Unrolling failed");
-      signalPassFailure();
-    }
-  });
-}
+#define GEN_PASS_DEF_AFFINEFULLUNROLLPASS
+#include "lib/Transform/Affine/Passes.h.inc"
 
-void AffineFullUnrollPatternRewriter::runOnOperation() {
-  RewritePatternSet patterns(&getContext());
-  patterns.add<AffineFullUnrollPattern>(&getContext());
+struct AffineFullUnroll : impl::AffineFullUnrollPassBase<AffineFullUnroll> {
+  using AffineFullUnrollPassBase::
+      AffineFullUnrollPassBase; // 直接使用基类构造函数
+  void runOnOperation() {
+    getOperation()->walk([&](affine::AffineForOp op) {
+      if (failed(affine::loopUnrollFull(op))) {
+        op.emitError("Unrolling failed");
+        signalPassFailure();
+      }
+    });
+  }
+};
 
-  applyPatternsAndFoldGreedily(getOperation(), std::move(patterns));
-}
 } // namespace tutorial

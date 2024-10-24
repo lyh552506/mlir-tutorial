@@ -37,14 +37,8 @@ set (target_libs
     ${conversion_libs}
     AffineFullUnroll
     ArithOpt
-    # MLIRNoisy
     MLIROptLib
     MLIRPass
-    # MLIRPoly
-    # MulToAdd
-    # NoisyPasses
-    # PolyToStandarda
-    # ortools::ortools
 )
 
 add_llvm_executable(mlir-tutorial tutorial-opt.cpp)
