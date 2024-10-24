@@ -1,4 +1,6 @@
 #include "../lib/Transform/Affine/AffineFullUnroll.h"
+#include "../lib/Transform/Affine/Passes.h"
+#include "lib/Dialect/Poly/PolyDialect.h"
 #include "lib/Transform/Arith/Mul2Add.h"
 #include "lib/Transform/Arith/Mul2Shl.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
@@ -8,20 +10,19 @@
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/IR/DialectRegistry.h"
 #include "mlir/IR/MLIRContext.h"
-#include "mlir/IR/ValueRange.h"
 #include "mlir/InitAllDialects.h"
 #include "mlir/Parser/Parser.h"
-#include "mlir/Pass/PassManager.h"
-#include "mlir/Pass/PassRegistry.h"
 #include "mlir/Support/FileUtilities.h"
 #include "mlir/Tools/mlir-opt/MlirOptMain.h"
+#include "mlir/Transforms/Passes.h"
 using namespace mlir;
 int main(int argc, char *argv[]) {
   DialectRegistry registry;
   registerAllDialects(registry);
-  PassRegistration<tutorial::AffineFullUnrollPatternRewriter>();
-  PassRegistration<tutorial::Mul2AddPass>();
-  PassRegistration<tutorial::Mul2ShlPass>();
+  registry.insert<mlir::tutorial::poly::PolyDialect>();
+  // PassRegistration<tutorial::AffineFullUnrollPatternRewriter>();
+  // PassRegistration<tutorial::Mul2AddPass>();
+  // PassRegistration<tutorial::Mul2ShlPass>();
   return asMainReturnCode(
       MlirOptMain(argc, argv, "Tutorial Pass Driver", registry));
   // MLIRContext ctx;

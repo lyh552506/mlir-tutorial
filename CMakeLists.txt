@@ -36,6 +36,7 @@ set (target_libs
     ${dialect_libs}
     ${conversion_libs}
     AffineFullUnroll
+	PolyDialect
     ArithOpt
     MLIROptLib
     MLIRPass
