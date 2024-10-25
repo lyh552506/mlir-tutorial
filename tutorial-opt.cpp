@@ -14,12 +14,13 @@
 #include "mlir/Parser/Parser.h"
 #include "mlir/Support/FileUtilities.h"
 #include "mlir/Tools/mlir-opt/MlirOptMain.h"
-#include "mlir/Transforms/Passes.h"
+#include "mlir/InitAllPasses.h"
 using namespace mlir;
 int main(int argc, char *argv[]) {
   DialectRegistry registry;
   registerAllDialects(registry);
   registry.insert<mlir::tutorial::poly::PolyDialect>();
+  registerAllPasses();
   // PassRegistration<tutorial::AffineFullUnrollPatternRewriter>();
   // PassRegistration<tutorial::Mul2AddPass>();
   // PassRegistration<tutorial::Mul2ShlPass>();
